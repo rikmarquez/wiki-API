@@ -38,7 +38,7 @@ app.get("/", function(req, res) {
   res.render("home");
 });
 
-
+// API de Articulos
 app.route("/articles")
     .get(function(req, res){
       Article.find({}, function(err, articles){
@@ -77,7 +77,66 @@ app.route("/articles")
     });
 
 
+// API para accesar un articulo especifico
+app.route("/articles/:articleTitle")
 
+    .get(function(req, res){
+      Article.findOne({title: req.params.articleTitle}, function(err, foundArticle){
+        if (!err) {
+          if (foundArticle) {
+            res.send(foundArticle);
+            console.log(foundArticle);
+          } else {
+            res.send("No se encontro ese titulo")
+          }
+        } else {
+          res.send(err);
+        }
+      });
+    })
+
+    .put(function(req, res){
+      Article.updateOne(
+        {title: req.params.articleTitle},
+        {title: req.body.title, content: req.body.content},
+        function(err){
+          if (!err){
+            res.send("Se actualizo exitosamente el articulo");
+            console.log("Se actualizo exitosamente -"+req.params.articleTitle);
+          }
+        }
+      )
+    })
+
+    .patch(function(req, res){
+      Article.updateOne(
+        {title: req.params.articleTitle},
+        {title: req.body.title, content: req.body.content},
+        function(err){
+          if (!err){
+            res.send("Se actualizo exitosamente el articulo");
+            console.log("Se actualizo exitosamente -"+req.params.articleTitle);
+          }
+        }
+      )
+    })
+
+    .delete(function(req, res){
+      Article.deleteOne(
+        {title: req.params.articleTitle},
+        function(err){
+          if (!err) {
+            res.send("Articulo eliminado exitosamente");
+          } else {
+            res.send(err);
+          }
+        }
+      )
+    });
+
+
+
+// Arrancando servidor NODE (Express)
 app.listen(3000, function() {
   console.log("Server started successfully - PORT 3000");
 });
